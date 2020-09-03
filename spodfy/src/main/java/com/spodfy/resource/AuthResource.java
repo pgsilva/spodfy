@@ -4,6 +4,11 @@ import com.spodfy.jwt.JwtRequest;
 import com.spodfy.jwt.JwtResponse;
 import com.spodfy.jwt.JwtUserDetailsService;
 import com.spodfy.jwt.JwtUtil;
+import com.spodfy.model.AjaxResult;
+import com.spodfy.model.UsuarioForm;
+import com.spodfy.service.UsuarioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-public class AuthResource {
+public class AuthResource extends ProductResource {
+    private static final Logger log = LoggerFactory.getLogger(AuthResource.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -26,6 +32,9 @@ public class AuthResource {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -33,6 +42,17 @@ public class AuthResource {
                 .loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public AjaxResult createRegisterUser(@RequestBody UsuarioForm form) throws Exception {
+        try {
+            usuarioService.createUsuario(form);
+            return buildAjaxSuccessResult(true);
+        } catch (Exception e) {
+            log.error("Erro.", e);
+            return buildAjaxErrorResult(e);
+        }
     }
 
     private void authenticate(String username, String password) throws Exception {

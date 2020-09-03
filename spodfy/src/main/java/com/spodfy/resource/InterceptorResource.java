@@ -54,6 +54,7 @@ public class InterceptorResource extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(
                 "/authenticate",
                 "/isAlive",
+                "/register",
                 "/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
