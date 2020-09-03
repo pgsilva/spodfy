@@ -47,8 +47,7 @@ public class AuthResource extends ProductResource {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public AjaxResult createRegisterUser(@RequestBody UsuarioForm form) throws Exception {
         try {
-            usuarioService.createUsuario(form);
-            return buildAjaxSuccessResult(true);
+            return buildAjaxSuccessResult(usuarioService.createUsuario(form));
         } catch (Exception e) {
             log.error("Erro.", e);
             return buildAjaxErrorResult(e);

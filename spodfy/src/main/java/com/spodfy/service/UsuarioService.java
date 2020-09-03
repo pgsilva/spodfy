@@ -12,6 +12,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UsuarioService {
 
@@ -24,7 +27,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public void createUsuario(UsuarioForm form) {
+    public Usuario createUsuario(UsuarioForm form) {
         CreateTableRequest tableRequest = dynamoDBMapper
                 .generateCreateTableRequest(Usuario.class);
 
@@ -36,5 +39,17 @@ public class UsuarioService {
         Usuario user = new Usuario();
         BeanUtils.copyProperties(form, user);
         usuarioRepository.save(user);
+        return user;
     }
+
+
+    public List<Usuario> findAllUsuario() {
+        Iterable<Usuario> it = usuarioRepository.findAll();
+        List<Usuario> result = new ArrayList<Usuario>();
+        for (Usuario u : it) {
+            result.add(u);
+        }
+        return result;
+    }
+
 }
