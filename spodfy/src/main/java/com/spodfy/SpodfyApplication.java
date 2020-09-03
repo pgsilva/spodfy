@@ -1,13 +1,13 @@
-package api.casamento;
+package com.spodfy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ApiCasamentoApplication {
+public class SpodfyApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiCasamentoApplication.class, args);
+		SpringApplication.run(SpodfyApplication.class, args);
 	}
 
 }
