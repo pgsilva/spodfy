@@ -8,9 +8,9 @@ import lombok.*;
 @Getter
 @Setter
 public class UsuarioForm {
+    private String idUsuario;
     private String nmUsuario;
     private String dsUser;
     private String dsEmail;
     private String dsSenha;
-
 }
