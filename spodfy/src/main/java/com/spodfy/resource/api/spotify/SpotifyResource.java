@@ -51,14 +51,10 @@ public class SpotifyResource extends ProductResource {
                                            @RequestParam(required = false) String state,
                                            HttpServletResponse httpServletResponse
     ) {
-        Object res;
         try {
-            if (StringUtils.isEmpty(error)) {
-                res = spotifyService.atualizaPermissaoUsuarioLogado(code);
-            } else {
+            if (!StringUtils.isEmpty(error))
                 throw new Exception("Ocorreu um erro na recuperaçao da permissao do usuario.");
-            }
-            return buildAjaxSuccessResult(res);
+            return buildAjaxSuccessResult(spotifyService.atualizaPermissaoUsuarioLogado(code));
         } catch (Exception e) {
             log.error("Erro.", e);
             httpServletResponse.setStatus(400);
