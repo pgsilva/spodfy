@@ -1,6 +1,7 @@
 package com.spodfy.jwt;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class JwtUserDetailsService implements UserDetailsService {
             Boolean result = criptoService.compareCriptoSHA256(criptoRequest, usuario.getDssenha());
 
             if (Boolean.TRUE.equals(result)) {
-                usuario.setDtultimoacesso(LocalDate.now());
+                usuario.setDtultimoacesso(LocalDateTime.now());
                 loginRepository.save(usuario);
                 return Boolean.TRUE;
             }
@@ -43,7 +44,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Login> loginOptional = loginRepository.findByDsuser(username);
         if (loginOptional.isPresent()) {
-            return new User(loginOptional.get().getDsuser(), loginOptional.get().getDssenha(),
+            return new User(loginOptional.get().getDsuser(), (loginOptional.get().getDssenha() != null ? loginOptional.get().getDssenha() : "default"),
                     new ArrayList<>());
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);

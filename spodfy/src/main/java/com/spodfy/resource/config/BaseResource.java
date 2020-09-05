@@ -1,4 +1,4 @@
-package com.spodfy.resource;
+package com.spodfy.resource.config;
 
 import com.spodfy.model.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +65,8 @@ public abstract class BaseResource {
         result.setHasError(true);
         result.setStatus(AjaxResult.Status.ERRO);
 
-        result.addError(e.getMessage());
-        result.setMsg(GENERIC_ERROR);
+        result.addError(GENERIC_ERROR);
+        result.setMsg(e.getMessage());
 
         return result;
     }

@@ -1,7 +1,8 @@
-package com.spodfy.resource;
+package com.spodfy.resource.config;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.spodfy.resource.config.BaseResource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProductResource extends BaseResource {

@@ -6,6 +6,7 @@ import com.spodfy.jwt.JwtUserDetailsService;
 import com.spodfy.jwt.JwtUtil;
 import com.spodfy.model.AjaxResult;
 import com.spodfy.model.LoginForm;
+import com.spodfy.resource.config.ProductResource;
 import com.spodfy.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @CrossOrigin
@@ -46,11 +44,12 @@ public class AuthResource extends ProductResource {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public AjaxResult createRegisterUser(@RequestBody LoginForm form) throws Exception {
+    public AjaxResult createRegisterUser(@RequestBody LoginForm form, HttpServletResponse httpServletResponse) throws Exception {
         try {
             return buildAjaxSuccessResult(loginService.createUsuario(form));
         } catch (Exception e) {
             log.error("Erro.", e);
+            httpServletResponse.setStatus(400);
             return buildAjaxErrorResult(e);
         }
     }

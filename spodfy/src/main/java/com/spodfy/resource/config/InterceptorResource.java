@@ -1,4 +1,4 @@
-package com.spodfy.resource;
+package com.spodfy.resource.config;
 
 import com.spodfy.jwt.JwtAuthenticationEntryPoint;
 import com.spodfy.jwt.JwtRequestFilter;
@@ -55,6 +55,8 @@ public class InterceptorResource extends WebSecurityConfigurerAdapter {
                 "/isAlive",
                 "/register",
                 "/authenticate",
+                "/callback",
+                "/redirect_login",
                 "/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
