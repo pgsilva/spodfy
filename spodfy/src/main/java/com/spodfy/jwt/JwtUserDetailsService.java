@@ -1,53 +1,49 @@
 package com.spodfy.jwt;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import com.amazonaws.util.StringUtils;
-import com.spodfy.repository.UsuarioRepository;
+import com.spodfy.repository.LoginRepository;
 import com.spodfy.service.CriptoService;
-import com.spodfy.table.Usuario;
+import com.spodfy.table.Login;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JwtUserDetailsService implements UserDetailsPasswordService, UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
     CriptoService criptoService;
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    LoginRepository loginRepository;
 
-    @Override
-    public UserDetails updatePassword(UserDetails username, String pass) throws UsernameNotFoundException {
-        if (StringUtils.isNullOrEmpty(username.getUsername())) {
-            String criptoRequest = criptoService.criptoSHA256(pass);
-            Optional<Usuario> usuarioOpt = Optional.empty();
+    public Boolean verifyPassword(String username, String pass) throws UsernameNotFoundException {
+        String criptoRequest = criptoService.criptoSHA256(pass);
+        Optional<Login> usuarioOpt = loginRepository.findByDsuser(username);
+        if (usuarioOpt.isPresent()) {
+            Login usuario = usuarioOpt.get();
+            Boolean result = criptoService.compareCriptoSHA256(criptoRequest, usuario.getDssenha());
 
-
-            if (usuarioOpt.isPresent()) {
-                Usuario usuario = usuarioOpt.get();
-                Boolean result = criptoService.compareCriptoSHA256(criptoRequest, usuario.getDsSenha());
-
-                if (Boolean.TRUE.equals(result))
-                    return new User(usuario.getNmUsuario(), usuario.getDsUser(), new ArrayList<>());
-
-            } else {
-                throw new UsernameNotFoundException("User not found with username: " + username.getUsername());
+            if (Boolean.TRUE.equals(result)) {
+                usuario.setDtultimoacesso(LocalDate.now());
+                loginRepository.save(usuario);
+                return Boolean.TRUE;
             }
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username.getUsername());
-        }
 
-        return null;
+        } else {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return Boolean.FALSE;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (StringUtils.isNullOrEmpty(username)) {
-            return new User(username, "xxx",
+        Optional<Login> loginOptional = loginRepository.findByDsuser(username);
+        if (loginOptional.isPresent()) {
+            return new User(loginOptional.get().getDsuser(), loginOptional.get().getDssenha(),
                     new ArrayList<>());
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);

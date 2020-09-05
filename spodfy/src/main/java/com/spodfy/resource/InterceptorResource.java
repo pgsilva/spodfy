@@ -52,9 +52,9 @@ public class InterceptorResource extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
 // Não cheque essas requisições
                 .authorizeRequests().antMatchers(
-                "/authenticate",
                 "/isAlive",
                 "/register",
+                "/authenticate",
                 "/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",

@@ -5,8 +5,8 @@ import com.spodfy.jwt.JwtResponse;
 import com.spodfy.jwt.JwtUserDetailsService;
 import com.spodfy.jwt.JwtUtil;
 import com.spodfy.model.AjaxResult;
-import com.spodfy.model.UsuarioForm;
-import com.spodfy.service.UsuarioService;
+import com.spodfy.model.LoginForm;
+import com.spodfy.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,21 +36,19 @@ public class AuthResource extends ProductResource {
     private JwtUserDetailsService userDetailsService;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private LoginService loginService;
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        final UserDetails userDetails = userDetailsService
-                .updatePassword(new User(authenticationRequest.getUsername(), null, new ArrayList<>()), authenticationRequest.getPassword());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = jwtTokenUtil.generateToken(authenticationRequest.getUsername());
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public AjaxResult createRegisterUser(@RequestBody UsuarioForm form) throws Exception {
+    public AjaxResult createRegisterUser(@RequestBody LoginForm form) throws Exception {
         try {
-            return buildAjaxSuccessResult(usuarioService.createUsuario(form));
+            return buildAjaxSuccessResult(loginService.createUsuario(form));
         } catch (Exception e) {
             log.error("Erro.", e);
             return buildAjaxErrorResult(e);
@@ -59,7 +57,7 @@ public class AuthResource extends ProductResource {
 
     private void authenticate(String username, String password) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            userDetailsService.verifyPassword(username, password);
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
