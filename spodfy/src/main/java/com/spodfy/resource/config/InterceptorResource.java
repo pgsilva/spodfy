@@ -56,6 +56,8 @@ public class InterceptorResource extends WebSecurityConfigurerAdapter {
                 "/register",
                 "/authenticate",
                 "/callback",
+                "/statusProcessor",
+                "/socket/**",
                 "/redirect_login",
                 "/v2/api-docs",
                 "/configuration/ui",

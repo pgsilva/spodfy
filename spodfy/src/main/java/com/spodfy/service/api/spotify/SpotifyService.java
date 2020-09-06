@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,14 +50,21 @@ public class SpotifyService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    HttpClient client = HttpClient.newHttpClient();
-    Gson gson = new Gson();
+
+    private HttpClient client = HttpClient.newHttpClient();
+    private SimpMessagingTemplate template;
+    private Gson gson = new Gson();
+
+    @Autowired
+    public SpotifyService(SimpMessagingTemplate template) {
+        this.template = template;
+    }
 
     /**
      * @apiNote Esse meteodo recebe o code de permissao que a api retornou
      * e faz a requisicao para o token do oauth inclusive salva no banco
      */
-    public Acesso atualizaPermissaoUsuarioLogado(String code) throws Exception {
+    public void atualizaPermissaoUsuarioLogado(String code) throws Exception {
         Acesso res = new Acesso();
 
         String body = preparaBodyRequisicaoToken(code);
@@ -77,7 +86,8 @@ public class SpotifyService {
          *
          * */
         recuperarInfoUsuarioAutenticado(token, res);
-        return res;
+        log.info(res.toString());
+        execute(res);
     }
 
     private void recuperarInfoUsuarioAutenticado(TokenSpotifyApi token, Acesso acesso) throws Exception {
@@ -115,4 +125,10 @@ public class SpotifyService {
 
         return res;
     }
+
+    @Async
+    public void execute(Acesso acesso) throws InterruptedException {
+        template.convertAndSend("/statusProcessor", acesso);
+    }
+
 }
