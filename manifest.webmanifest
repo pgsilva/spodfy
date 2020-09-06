@@ -6,6 +6,11 @@
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "description": "minha app etc",
+  "orientation": "portrait",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",
@@ -55,5 +60,6 @@
       "type": "image/png",
       "purpose": "maskable any"
     }
-  ]
+  ],
+  "splash_pages": null
 }
