@@ -29,9 +29,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,9 +97,11 @@ public class SpotifyService {
         Map usuarioMap = gson.fromJson(response.body().toString(), Map.class);
 
         acesso.setNmusuario(usuarioMap.get("display_name").toString());
-        acesso.setDsEmail(usuarioMap.get("email").toString());
-        acesso.setDtAcesso(LocalDateTime.now());
+        acesso.setDsemail(usuarioMap.get("email").toString());
+        acesso.setDtacesso(LocalDateTime.now());
         acesso.setTokenAcesso(jwtUtil.generateToken(usuarioMap.get("email").toString()));
+        List<Map> imagens = (ArrayList) usuarioMap.get("images");
+        acesso.setUrlImage(imagens.get(0).get("url") != null ? imagens.get(0).get("url").toString() : "default");
 
         Login login = loginRepository.findByDsemail(usuarioMap.get("email").toString());
         loginService.salvarUsuarioSpotify(login, usuarioMap, token);

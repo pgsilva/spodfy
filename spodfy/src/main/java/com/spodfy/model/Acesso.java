@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 @ToString
 public class Acesso {
     private String nmusuario;
-    private String dsEmail;
-    private LocalDateTime dtAcesso;
+    private String dsemail;
+    private LocalDateTime dtacesso;
     private String tokenAcesso;
+    private String urlImage;
 }
